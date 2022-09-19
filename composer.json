@@ -1,17 +1,17 @@
 {
-    "name": ":vendor_slug/:package_slug",
-    "description": ":package_description",
+    "name": "mohamedsabil83/filament-hijri-picker",
+    "description": "A Hijri date time picker for Filament",
     "keywords": [
-        ":vendor_name",
+        "mohamedsabil83",
         "laravel",
-        ":package_slug"
+        "filament-hijri-picker"
     ],
-    "homepage": "https://github.com/:vendor_slug/:package_slug",
+    "homepage": "https://github.com/mohamedsabil83/filament-hijri-picker",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": "author@domain.com",
+            "name": "MohamedSabil83",
+            "email": "me@mohamedsabil83.com",
             "role": "Developer"
         }
     ],
@@ -35,13 +35,13 @@
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src",
-            "VendorName\\Skeleton\\Database\\Factories\\": "database/factories"
+            "Mohamedsabil83\\FilamentHijriPicker\\": "src",
+            "Mohamedsabil83\\FilamentHijriPicker\\Database\\Factories\\": "database/factories"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests"
+            "Mohamedsabil83\\FilamentHijriPicker\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -56,10 +56,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "VendorName\\Skeleton\\SkeletonServiceProvider"
+                "Mohamedsabil83\\FilamentHijriPicker\\FilamentHijriPickerServiceProvider"
             ],
             "aliases": {
-                "Skeleton": "VendorName\\Skeleton\\Facades\\Skeleton"
+                "FilamentHijriPicker": "Mohamedsabil83\\FilamentHijriPicker\\Facades\\FilamentHijriPicker"
             }
         }
     },

@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace Mohamedsabil83\FilamentHijriPicker\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class FilamentHijriPickerCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'filament-hijri-picker';
 
     public $description = 'My command';
 
