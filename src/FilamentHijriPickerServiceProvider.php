@@ -2,12 +2,18 @@
 
 namespace Mohamedsabil83\FilamentHijriPicker;
 
+use Filament\Facades\Filament;
+use Filament\PluginServiceProvider;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Mohamedsabil83\FilamentHijriPicker\Commands\FilamentHijriPickerCommand;
 
-class FilamentHijriPickerServiceProvider extends PackageServiceProvider
+class FilamentHijriPickerServiceProvider extends PluginServiceProvider
+    // class FilamentHijriPickerServiceProvider extends PackageServiceProvider
 {
+    protected array $beforeCoreScripts = [
+        'filament-hijri-picker' => __DIR__.'/../resources/dist/js/hijri-date-time-picker.js',
+    ];
+
     public function configurePackage(Package $package): void
     {
         /*
@@ -17,9 +23,15 @@ class FilamentHijriPickerServiceProvider extends PackageServiceProvider
          */
         $package
             ->name('filament-hijri-picker')
-            ->hasConfigFile()
-            ->hasViews()
-            ->hasMigration('create_filament-hijri-picker_table')
-            ->hasCommand(FilamentHijriPickerCommand::class);
+            ->hasViews();
+    }
+
+    public function packageBooted(): void
+    {
+        Filament::registerScripts([
+            // 'filament-hijri-picker' => __DIR__.'/../resources/dist/js/hijri-date-time-picker.js',
+            // 'filament-hijri-picker' => asset('vendor/filament-hijri-picker/tinymce/tinymce.min.js'),
+            // asset('vendor/filament-hijri-picker/js/filament-forms-range-component.min.css'),
+        ]);
     }
 }
