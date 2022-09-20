@@ -2,7 +2,6 @@
 
 namespace Mohamedsabil83\FilamentHijriPicker;
 
-use Filament\Facades\Filament;
 use Filament\PluginServiceProvider;
 use Spatie\LaravelPackageTools\Package;
 
@@ -22,11 +21,5 @@ class FilamentHijriPickerServiceProvider extends PluginServiceProvider
         $package
             ->name('filament-hijri-picker')
             ->hasViews();
-    }
-
-    public function packageBooted(): void
-    {
-        Filament::registerScripts([
-        ]);
     }
 }
