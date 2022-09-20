@@ -3,8 +3,8 @@
 namespace Mohamedsabil83\FilamentHijriPicker\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Orchestra\Testbench\TestCase as Orchestra;
 use Mohamedsabil83\FilamentHijriPicker\FilamentHijriPickerServiceProvider;
+use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {
