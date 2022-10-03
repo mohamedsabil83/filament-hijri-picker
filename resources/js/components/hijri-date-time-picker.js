@@ -194,6 +194,12 @@ export default (Alpine) => {
 
                         let date = this.getSelectedDate();
 
+                        if (date === null) {
+                            this.clearState();
+
+                            return;
+                        }
+
                         if (this.getMaxDate() !== null && date?.isAfter(this.getMaxDate())) {
                             date = null;
                         }
@@ -224,6 +230,10 @@ export default (Alpine) => {
                     this.isClearingState = true;
 
                     this.setState(null);
+
+                    this.hour = 0;
+                    this.minute = 0;
+                    this.second = 0;
 
                     this.$nextTick(() => (this.isClearingState = false));
                 },
@@ -324,6 +334,10 @@ export default (Alpine) => {
 
                 getSelectedDate: function () {
                     if (this.state === undefined) {
+                        return null;
+                    }
+
+                    if (this.state === null) {
                         return null;
                     }
 
