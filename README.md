@@ -3,8 +3,8 @@
 ![MohamedSabil83 Filament Hijri Picker](https://preview.dragon-code.pro/MohamedSabil83/Filament-Hijri-Picker.svg?brand=laravel)
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/mohamedsabil83/filament-hijri-picker.svg?style=flat-square)](https://packagist.org/packages/mohamedsabil83/filament-hijri-picker)
-[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/mohamedsabil83/filament-hijri-picker/run-tests?label=tests)](https://github.com/mohamedsabil83/filament-hijri-picker/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/mohamedsabil83/filament-hijri-picker/Fix%20PHP%20code%20style%20issues?label=code%20style)](https://github.com/mohamedsabil83/filament-hijri-picker/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/mohamedsabil83/filament-hijri-picker/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/mohamedsabil83/filament-hijri-picker/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/mohamedsabil83/filament-hijri-picker/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/mohamedsabil83/filament-hijri-picker/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/mohamedsabil83/filament-hijri-picker.svg?style=flat-square)](https://packagist.org/packages/mohamedsabil83/filament-hijri-picker)
 
 This package is based on Filament Date/DateTime picker for use with Hijri dates.
@@ -17,7 +17,9 @@ You can install the package via composer:
 composer require mohamedsabil83/filament-hijri-picker
 ```
 
-That is it. Now, you can use it as you do with the default [Filament Date/DateTime picker](https://filamentphp.com/docs/2.x/forms/fields#date-time-picker)
+## Usage
+
+You can use it as you do with the default [Filament Date/DateTime picker](https://filamentphp.com/docs/2.x/forms/fields#date-time-picker).
 
 ## Testing
 
@@ -39,8 +41,8 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 ## Credits
 
--   [MohamedSabil83](https://github.com/mohamedsabil83)
--   [All Contributors](../../contributors)
+- [MohamedSabil83](https://github.com/mohamedsabil83)
+- [All Contributors](../../contributors)
 
 ## License
 

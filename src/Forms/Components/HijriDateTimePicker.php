@@ -1,6 +1,6 @@
 <?php
 
-namespace Mohamedsabil83\FilamentHijriPicker\Forms\Components;
+namespace MohamedSabil83\FilamentHijriPicker\Forms\Components;
 
 use Filament\Forms;
 

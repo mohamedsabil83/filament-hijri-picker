@@ -1,6 +1,6 @@
 <?php
 
-namespace Mohamedsabil83\FilamentHijriPicker;
+namespace MohamedSabil83\FilamentHijriPicker;
 
 use Filament\PluginServiceProvider;
 use Spatie\LaravelPackageTools\Package;
