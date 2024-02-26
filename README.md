@@ -19,7 +19,7 @@ composer require mohamedsabil83/filament-hijri-picker
 
 ## Usage
 
-You can use it as you do with the default [Filament Date/DateTime picker](https://filamentphp.com/docs/2.x/forms/fields#date-time-picker).
+You can use it as you do with the default [Filament Date/DateTime picker](https://filamentphp.com/docs/3.x/forms/fields/date-time-picker).
 
 ## Testing
 

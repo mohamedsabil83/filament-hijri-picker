@@ -2,24 +2,26 @@
 
 namespace MohamedSabil83\FilamentHijriPicker;
 
-use Filament\PluginServiceProvider;
+use Filament\Support\Assets\AlpineComponent;
+use Filament\Support\Facades\FilamentAsset;
 use Spatie\LaravelPackageTools\Package;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class FilamentHijriPickerServiceProvider extends PluginServiceProvider
+class FilamentHijriPickerServiceProvider extends PackageServiceProvider
 {
-    protected array $beforeCoreScripts = [
-        'filament-hijri-picker' => __DIR__.'/../resources/dist/js/hijri-date-time-picker.js',
-    ];
+    public static string $name = 'filament-hijri-picker';
 
     public function configurePackage(Package $package): void
     {
-        /*
-         * This class is a Package Service Provider
-         *
-         * More info: https://github.com/spatie/laravel-package-tools
-         */
         $package
-            ->name('filament-hijri-picker')
+            ->name(static::$name)
             ->hasViews();
+    }
+
+    public function packageBooted(): void
+    {
+        FilamentAsset::register([
+            AlpineComponent::make('filament-hijri-picker', __DIR__.'/../resources/dist/js/hijri-date-time-picker.js'),
+        ], package: 'mohamedsabil83/filament-hijri-picker');
     }
 }

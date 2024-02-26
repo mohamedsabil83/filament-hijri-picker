@@ -1,11 +1,13 @@
 {
   "name": "filament-hijri-picker",
+  "type": "module",
   "scripts": {
-    "esbuild": "esbuild resources/js/index.js --bundle --minify --outfile=resources/dist/js/hijri-date-time-picker.js"
+    "dev": "node bin/build.js --dev",
+    "build": "node bin/build.js"
   },
   "devDependencies": {
-    "dayjs": "^1.11.7",
+    "dayjs": "^1.11.10",
     "dayjs-calendar-hijri": "^1.0.2",
-    "esbuild": "^0.17.8"
+    "esbuild": "^0.20.1"
   }
 }

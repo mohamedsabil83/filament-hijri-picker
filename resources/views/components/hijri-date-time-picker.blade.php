@@ -1,123 +1,141 @@
+@php
+    use Filament\Support\Facades\FilamentView;
+
+    $datalistOptions = $getDatalistOptions();
+    $extraAlpineAttributes = $getExtraAlpineAttributes();
+    $id = $getId();
+    $isDisabled = $isDisabled();
+    $isPrefixInline = $isPrefixInline();
+    $isSuffixInline = $isSuffixInline();
+    $prefixActions = $getPrefixActions();
+    $prefixIcon = $getPrefixIcon();
+    $prefixLabel = $getPrefixLabel();
+    $suffixActions = $getSuffixActions();
+    $suffixIcon = $getSuffixIcon();
+    $suffixLabel = $getSuffixLabel();
+    $statePath = $getStatePath();
+@endphp
+
 <x-dynamic-component
     :component="$getFieldWrapperView()"
-    :id="$getId()"
-    :label="$getLabel()"
-    :label-sr-only="$isLabelHidden()"
-    :helper-text="$getHelperText()"
-    :hint="$getHint()"
-    :hint-icon="$getHintIcon()"
-    :required="$isRequired()"
-    :state-path="$getStatePath()"
+    :field="$field"
+    :inline-label-vertical-alignment="\Filament\Support\Enums\VerticalAlignment::Center"
 >
-    <div
-        x-data="hijriDateTimePickerFormComponent({
-            displayFormat: '{{ convert_date_format($getDisplayFormat())->to('day.js') }}',
-            firstDayOfWeek: {{ $getFirstDayOfWeek() }},
-            isAutofocused: @js($isAutofocused()),
-            isDisabled: @js($isDisabled()),
-            locale: @js(app()->getLocale()),
-            shouldCloseOnDateSelection: @js($shouldCloseOnDateSelection()),
-            state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
-        })"
-        {{ $attributes->merge($getExtraAttributes())->class(['filament-hijri-picker-component relative']) }}
-        {{ $getExtraAlpineAttributeBag() }}
+    <x-filament::input.wrapper
+        :disabled="$isDisabled"
+        :inline-prefix="$isPrefixInline"
+        :inline-suffix="$isSuffixInline"
+        :prefix="$prefixLabel"
+        :prefix-actions="$prefixActions"
+        :prefix-icon="$prefixIcon"
+        :prefix-icon-color="$getPrefixIconColor()"
+        :suffix="$suffixLabel"
+        :suffix-actions="$suffixActions"
+        :suffix-icon="$suffixIcon"
+        :suffix-icon-color="$getSuffixIconColor()"
+        :valid="! $errors->has($statePath)"
+        :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
-        <input
-            x-ref="maxDate"
-            type="hidden"
-            value="{{ $getMaxDate() }}"
-        />
-        <input
-            x-ref="minDate"
-            type="hidden"
-            value="{{ $getMinDate() }}"
-        />
-
-        <button
-            @unless($isDisabled())
-                x-ref="button"
-                x-on:click="togglePanelVisibility()"
-                x-on:keydown.enter.stop.prevent="isOpen() ? selectDate() : togglePanelVisibility()"
-                x-on:keydown.arrow-left.stop.prevent="focusPreviousDay()"
-                x-on:keydown.arrow-right.stop.prevent="focusNextDay()"
-                x-on:keydown.arrow-up.stop.prevent="focusPreviousWeek()"
-                x-on:keydown.arrow-down.stop.prevent="focusNextWeek()"
-                x-on:keydown.backspace.stop.prevent="clearState()"
-                x-on:keydown.clear.stop.prevent="clearState()"
-                x-on:keydown.delete.stop.prevent="clearState()"
-                aria-label="{{ $getPlaceholder() }}"
-                dusk="filament.forms.{{ $getStatePath() }}.open"
-            @endunless
-            type="button"
-            {{ $getExtraTriggerAttributeBag()->class([
-                'bg-white relative w-full border py-2 pl-3 pr-10 rtl:pl-10 rtl:pr-3 text-left cursor-default rounded-lg shadow-sm',
-                'focus-within:ring-1 focus-within:border-primary-500 focus-within:ring-inset focus-within:ring-primary-500' => !$isDisabled(),
-                'dark:bg-gray-700' => config('forms.dark_mode'),
-                'border-gray-300' => !$errors->has($getStatePath()),
-                'dark:border-gray-600' => !$errors->has($getStatePath()) && config('forms.dark_mode'),
-                'border-danger-600' => $errors->has($getStatePath()),
-                'opacity-70' => $isDisabled(),
-                'dark:text-gray-300' => $isDisabled() && config('forms.dark_mode'),
-            ]) }}
+        <div
+            x-ignore
+            @if (FilamentView::hasSpaMode())
+                ax-load="visible"
+            @else
+                ax-load
+            @endif
+            ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('filament-hijri-picker', 'mohamedsabil83/filament-hijri-picker') }}"
+            x-data="dateTimePickerFormComponent({
+                displayFormat: '{{ convert_date_format($getDisplayFormat())->to('day.js') }}',
+                firstDayOfWeek: {{ $getFirstDayOfWeek() }},
+                isAutofocused: @js($isAutofocused()),
+                locale: @js(app()->getLocale()),
+                shouldCloseOnDateSelection: @js($shouldCloseOnDateSelection()),
+                state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
+            })"
+            x-on:keydown.esc="isOpen() && $event.stopPropagation()"
+            {{
+                $attributes
+                    ->merge($getExtraAttributes(), escape: false)
+                    ->merge($getExtraAlpineAttributes(), escape: false)
+                    ->class(['filament-hijri-picker'])
+            }}
         >
             <input
-                readonly
-                placeholder="{{ $getPlaceholder() }}"
-                x-model="displayText"
-                {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
-                @class([
-                    'w-full h-full p-0 placeholder-gray-400 bg-transparent border-0 focus:placeholder-gray-500 focus:ring-0 focus:outline-none',
-                    'dark:bg-gray-700 dark:placeholder-gray-400' => config('forms.dark_mode'),
-                    'cursor-default' => $isDisabled(),
-                ])
+                x-ref="maxDate"
+                type="hidden"
+                value="{{ $getMaxDate() }}"
             />
 
-            <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 rtl:right-auto rtl:left-0 rtl:pl-2">
-                <svg
-                    @class([
-                        'w-5 h-5 text-gray-400',
-                        'dark:text-gray-400' => config('forms.dark_mode'),
-                    ])
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                </svg>
-            </span>
-        </button>
+            <input
+                x-ref="minDate"
+                type="hidden"
+                value="{{ $getMinDate() }}"
+            />
 
-        @unless($isDisabled())
+            <input
+                x-ref="disabledDates"
+                type="hidden"
+                value="{{ json_encode($getDisabledDates()) }}"
+            />
+
+            <button
+                x-ref="button"
+                x-on:click="togglePanelVisibility()"
+                x-on:keydown.enter.stop.prevent="
+                    if (! $el.disabled) {
+                        isOpen() ? selectDate() : togglePanelVisibility()
+                    }
+                "
+                x-on:keydown.arrow-left.stop.prevent="if (! $el.disabled) focusPreviousDay()"
+                x-on:keydown.arrow-right.stop.prevent="if (! $el.disabled) focusNextDay()"
+                x-on:keydown.arrow-up.stop.prevent="if (! $el.disabled) focusPreviousWeek()"
+                x-on:keydown.arrow-down.stop.prevent="if (! $el.disabled) focusNextWeek()"
+                x-on:keydown.backspace.stop.prevent="if (! $el.disabled) clearState()"
+                x-on:keydown.clear.stop.prevent="if (! $el.disabled) clearState()"
+                x-on:keydown.delete.stop.prevent="if (! $el.disabled) clearState()"
+                aria-label="{{ $getPlaceholder() }}"
+                type="button"
+                tabindex="-1"
+                @disabled($isDisabled)
+                {{
+                    $getExtraTriggerAttributeBag()->class([
+                        'w-full',
+                    ])
+                }}
+            >
+                <input
+                    @disabled($isDisabled)
+                    readonly
+                    placeholder="{{ $getPlaceholder() }}"
+                    wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.display-text"
+                    x-model="displayText"
+                    @if ($id = $getId()) id="{{ $id }}" @endif
+                    @class([
+                        'w-full border-none bg-transparent px-3 py-1.5 text-base text-gray-950 outline-none transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] sm:text-sm sm:leading-6',
+                    ])
+                />
+            </button>
+
             <div
                 x-ref="panel"
                 x-cloak
                 x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
-                wire:ignore.self
-                wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.panel"
+                wire:ignore
+                wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.panel"
                 @class([
-                    'absolute hidden z-10 my-1 bg-white border border-gray-300 rounded-lg shadow-md',
-                    'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),
-                    'p-4 min-w-[16rem] w-fit' => $hasDate(),
+                    'filament-hijri-picker-panel absolute z-10 rounded-lg bg-white p-4 shadow-lg ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
                 ])
             >
-                <div class="space-y-3">
+                <div class="grid gap-y-3">
                     @if ($hasDate())
-                        <div class="flex items-center justify-between space-x-1 rtl:space-x-reverse">
+                        <div class="flex items-center justify-between">
                             <select
                                 x-model="focusedMonth"
-                                @class([
-                                    'grow px-1 py-0 text-lg font-medium text-gray-800 border-0 cursor-pointer focus:ring-0 focus:outline-none',
-                                    'dark:bg-gray-700 dark:text-gray-200' => config('forms.dark_mode'),
-                                ])
-                                dusk="filament.forms.{{ $getStatePath() }}.focusedMonth"
+                                class="grow cursor-pointer border-none bg-transparent p-0 text-sm font-medium text-gray-950 focus:ring-0 dark:bg-gray-900 dark:text-white"
                             >
-                                <template x-for="(month, index) in months">
+                                <template
+                                    x-for="(month, index) in months"
+                                >
                                     <option
                                         x-bind:value="index"
                                         x-text="month"
@@ -129,38 +147,31 @@
                                 type="number"
                                 inputmode="numeric"
                                 x-model.debounce="focusedYear"
-                                @class([
-                                    'w-20 p-0 text-lg text-right border-0 focus:ring-0 focus:outline-none',
-                                    'dark:bg-gray-700 dark:text-gray-200' => config('forms.dark_mode'),
-                                ])
-                                dusk="filament.forms.{{ $getStatePath() }}.focusedYear"
+                                class="w-16 border-none bg-transparent p-0 text-right text-sm text-gray-950 focus:ring-0 dark:text-white"
                             />
                         </div>
 
                         <div class="grid grid-cols-7 gap-1">
                             <template
                                 x-for="(day, index) in dayLabels"
-                                :key="index"
+                                x-bind:key="index"
                             >
                                 <div
                                     x-text="day"
-                                    @class([
-                                        'text-xs font-medium text-center text-gray-800',
-                                        'dark:text-gray-200' => config('forms.dark_mode'),
-                                    ])
+                                    class="text-center text-xs font-medium text-gray-500 dark:text-gray-400"
                                 ></div>
                             </template>
                         </div>
 
                         <div
                             role="grid"
-                            class="grid grid-cols-7 gap-1"
+                            class="grid grid-cols-[repeat(7,minmax(theme(spacing.7),1fr))] gap-1"
                         >
                             <template
                                 x-for="day in emptyDaysInFocusedMonth"
                                 x-bind:key="day"
                             >
-                                <div class="border border-transparent text-center text-sm"></div>
+                                <div></div>
                             </template>
 
                             <template
@@ -174,81 +185,85 @@
                                     role="option"
                                     x-bind:aria-selected="focusedDate.date() === day"
                                     x-bind:class="{
-                                        'text-gray-700 @if (config('forms.dark_mode')) dark:text-gray-300 @endif': !dayIsSelected(day),
-                                        'cursor-pointer': !dayIsDisabled(day),
-                                        'bg-primary-50 @if (config('forms.dark_mode')) dark:bg-primary-100 dark:text-gray-600 @endif': dayIsToday(day) && !dayIsSelected(day) && focusedDate.date() !== day && !dayIsDisabled(day),
-                                        'bg-primary-200 @if (config('forms.dark_mode')) dark:text-gray-600 @endif': focusedDate.date() === day && !dayIsSelected(day),
-                                        'bg-primary-500 text-white': dayIsSelected(day),
-                                        'cursor-not-allowed pointer-events-none': dayIsDisabled(day),
-                                        'opacity-50': focusedDate.date() !== day && dayIsDisabled(day),
-                                    }"
-                                    x-bind:dusk="'filament.forms.{{ $getStatePath() }}' + '.focusedDate.' + day"
-                                    class="rounded-full text-center text-sm leading-loose transition duration-100 ease-in-out"
+                                            'text-gray-950 dark:text-white': ! dayIsToday(day) && ! dayIsSelected(day),
+                                            'cursor-pointer': ! dayIsDisabled(day),
+                                            'text-primary-600 dark:text-primary-400':
+                                                dayIsToday(day) &&
+                                                ! dayIsSelected(day) &&
+                                                focusedDate.date() !== day &&
+                                                ! dayIsDisabled(day),
+                                            'bg-gray-50 dark:bg-white/5':
+                                                focusedDate.date() === day && ! dayIsSelected(day),
+                                            'text-primary-600 bg-gray-50 dark:bg-white/5 dark:text-primary-400':
+                                                dayIsSelected(day),
+                                            'pointer-events-none': dayIsDisabled(day),
+                                            'opacity-50': focusedDate.date() !== day && dayIsDisabled(day),
+                                        }"
+                                    class="rounded-full text-center text-sm leading-loose transition duration-75"
                                 ></div>
                             </template>
                         </div>
                     @endif
 
                     @if ($hasTime())
-                        <div @class([
-                            'flex items-center justify-center bg-gray-50 py-2 rounded-lg rtl:flex-row-reverse',
-                            'dark:bg-gray-800' => config('forms.dark_mode'),
-                        ])>
+                        <div
+                            class="flex items-center justify-center rtl:flex-row-reverse"
+                        >
                             <input
                                 max="23"
                                 min="0"
+                                step="{{ $getHoursStep() }}"
                                 type="number"
                                 inputmode="numeric"
                                 x-model.debounce="hour"
-                                @class([
-                                    'w-16 p-0 pr-1 text-xl bg-gray-50 text-center text-gray-700 border-0 focus:ring-0 focus:outline-none',
-                                    'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
-                                ])
-                                dusk="filament.forms.{{ $getStatePath() }}.hour"
+                                class="me-1 w-10 border-none bg-transparent p-0 text-center text-sm text-gray-950 focus:ring-0 dark:text-white"
                             />
 
-                            <span @class([
-                                'text-xl font-medium bg-gray-50 text-gray-700',
-                                'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
-                            ])>:</span>
+                            <span
+                                class="text-sm font-medium text-gray-500 dark:text-gray-400"
+                            >
+                                    :
+                                </span>
 
                             <input
                                 max="59"
                                 min="0"
+                                step="{{ $getMinutesStep() }}"
                                 type="number"
                                 inputmode="numeric"
                                 x-model.debounce="minute"
-                                @class([
-                                    'w-16 p-0 pr-1 text-xl text-center bg-gray-50 text-gray-700 border-0 focus:ring-0 focus:outline-none',
-                                    'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
-                                ])
-                                dusk="filament.forms.{{ $getStatePath() }}.minute"
+                                class="me-1 w-10 border-none bg-transparent p-0 text-center text-sm text-gray-950 focus:ring-0 dark:text-white"
                             />
 
                             @if ($hasSeconds())
-                                <span @class([
-                                    'text-xl font-medium text-gray-700 bg-gray-50',
-                                    'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
-                                ])>:</span>
-
+                                <span
+                                    class="text-sm font-medium text-gray-500 dark:text-gray-400"
+                                >
+                                        :
+                                    </span>
 
                                 <input
                                     max="59"
                                     min="0"
+                                    step="{{ $getSecondsStep() }}"
                                     type="number"
                                     inputmode="numeric"
                                     x-model.debounce="second"
-                                    dusk="filament.forms.{{ $getStatePath() }}.second"
-                                    @class([
-                                        'w-16 p-0 pr-1 text-xl text-center bg-gray-50 text-gray-700 border-0 focus:ring-0 focus:outline-none',
-                                        'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
-                                    ])
+                                    class="me-1 w-10 border-none bg-transparent p-0 text-center text-sm text-gray-950 focus:ring-0 dark:text-white"
                                 />
                             @endif
                         </div>
                     @endif
                 </div>
             </div>
-        @endunless
-    </div>
+        </div>
+    </x-filament::input.wrapper>
+
+    @if ($datalistOptions)
+        <datalist id="{{ $id }}-list">
+            @foreach ($datalistOptions as $option)
+                <option value="{{ $option }}" />
+            @endforeach
+        </datalist>
+    @endif
 </x-dynamic-component>

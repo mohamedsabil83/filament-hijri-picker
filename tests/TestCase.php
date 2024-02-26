@@ -21,5 +21,6 @@ class TestCase extends Orchestra
 
     public function getEnvironmentSetUp($app)
     {
+        //
     }
 }
