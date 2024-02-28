@@ -21,7 +21,7 @@ class FilamentHijriPickerServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         FilamentAsset::register([
-            AlpineComponent::make('filament-hijri-picker', __DIR__.'/../resources/dist/js/hijri-date-time-picker.js'),
+            AlpineComponent::make('filament-hijri-picker', __DIR__.'/../dist/js/components/hijri-date-time-picker.js'),
         ], package: 'mohamedsabil83/filament-hijri-picker');
     }
 }

@@ -44,7 +44,7 @@
                 ax-load
             @endif
             ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('filament-hijri-picker', 'mohamedsabil83/filament-hijri-picker') }}"
-            x-data="dateTimePickerFormComponent({
+            x-data="hijriDateTimePickerFormComponent({
                 displayFormat: '{{ convert_date_format($getDisplayFormat())->to('day.js') }}',
                 firstDayOfWeek: {{ $getFirstDayOfWeek() }},
                 isAutofocused: @js($isAutofocused()),
