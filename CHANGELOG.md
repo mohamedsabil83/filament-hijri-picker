@@ -2,6 +2,15 @@
 
 All notable changes to `filament-hijri-picker` will be documented in this file.
 
+## v1.0.0 - 2024-03-11
+
+### What's Changed
+
+* Return Hijri date instead of equivalent Gregory
+* Bump ramsey/composer-install from 2 to 3 by @dependabot in https://github.com/mohamedsabil83/filament-hijri-picker/pull/15
+
+**Full Changelog**: https://github.com/mohamedsabil83/filament-hijri-picker/compare/v0.3.0...v1.0.0
+
 ## v0.3.0 - 2024-02-26
 
 ### What's Changed
