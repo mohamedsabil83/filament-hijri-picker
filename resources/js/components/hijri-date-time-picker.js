@@ -1,16 +1,17 @@
 import dayjs from 'dayjs/esm';
+import calendarSystems from "@calidy/dayjs-calendarsystems";
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import localeData from 'dayjs/plugin/localeData';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
-import hijri from 'dayjs-calendar-hijri';
+import HijriCalendarSystem from "@calidy/dayjs-calendarsystems/calendarSystems/HijriCalendarSystem";
 
-dayjs.extend(hijri);
 dayjs.extend(customParseFormat);
 dayjs.extend(localeData);
 dayjs.extend(timezone);
 dayjs.extend(utc);
-dayjs.calendar('hijri');
+dayjs.extend(calendarSystems);
+dayjs.registerCalendarSystem('hijri', new HijriCalendarSystem());
 
 window.dayjs = dayjs;
 
@@ -54,11 +55,13 @@ export default function hijriDateTimePickerFormComponent({
         init: function () {
             dayjs.locale(locale)
 
-            this.focusedDate = dayjs().tz(timezone)
+            this.focusedDate = dayjs().tz(timezone).toCalendarSystem('hijri')
 
             let date =
                 this.getSelectedDate() ??
                 dayjs().tz(timezone).hour(0).minute(0).second(0)
+
+            date = date.toCalendarSystem('hijri')
 
             if (this.getMaxDate() !== null && date.isAfter(this.getMaxDate())) {
                 date = null
@@ -105,7 +108,7 @@ export default function hijriDateTimePickerFormComponent({
                 let year = +this.focusedYear
 
                 if (!Number.isInteger(year)) {
-                    year = dayjs().tz(timezone).year()
+                    year = dayjs().tz(timezone).toCalendarSystem('hijri').year()
 
                     this.focusedYear = year
                 }
@@ -284,7 +287,7 @@ export default function hijriDateTimePickerFormComponent({
         },
 
         dayIsDisabled: function (day) {
-            this.focusedDate ??= dayjs().tz(timezone)
+            this.focusedDate ??= dayjs().tz(timezone).toCalendarSystem('hijri')
 
             return this.dateIsDisabled(this.focusedDate.date(day))
         },
@@ -296,7 +299,7 @@ export default function hijriDateTimePickerFormComponent({
                 return false
             }
 
-            this.focusedDate ??= dayjs().tz(timezone)
+            this.focusedDate ??= dayjs().tz(timezone).toCalendarSystem('hijri')
 
             return (
                 selectedDate.date() === day &&
@@ -306,7 +309,7 @@ export default function hijriDateTimePickerFormComponent({
         },
 
         dayIsToday: function (day) {
-            let date = dayjs().tz(timezone)
+            let date = dayjs().tz(timezone).toCalendarSystem('hijri')
             this.focusedDate ??= date
 
             return (
@@ -317,25 +320,25 @@ export default function hijriDateTimePickerFormComponent({
         },
 
         focusPreviousDay: function () {
-            this.focusedDate ??= dayjs().tz(timezone)
+            this.focusedDate ??= dayjs().tz(timezone).toCalendarSystem('hijri')
 
             this.focusedDate = this.focusedDate.subtract(1, 'day')
         },
 
         focusPreviousWeek: function () {
-            this.focusedDate ??= dayjs().tz(timezone)
+            this.focusedDate ??= dayjs().tz(timezone).toCalendarSystem('hijri')
 
             this.focusedDate = this.focusedDate.subtract(1, 'week')
         },
 
         focusNextDay: function () {
-            this.focusedDate ??= dayjs().tz(timezone)
+            this.focusedDate ??= dayjs().tz(timezone).toCalendarSystem('hijri')
 
             this.focusedDate = this.focusedDate.add(1, 'day')
         },
 
         focusNextWeek: function () {
-            this.focusedDate ??= dayjs().tz(timezone)
+            this.focusedDate ??= dayjs().tz(timezone).toCalendarSystem('hijri')
 
             this.focusedDate = this.focusedDate.add(1, 'week')
         },
@@ -392,7 +395,7 @@ export default function hijriDateTimePickerFormComponent({
                 this.focusedDate =
                     this.getSelectedDate() ??
                     this.getMinDate() ??
-                    dayjs().tz(timezone)
+                    dayjs().tz(timezone).toCalendarSystem('hijri')
 
                 this.setupDaysGrid()
             }
@@ -405,7 +408,7 @@ export default function hijriDateTimePickerFormComponent({
                 this.setFocusedDay(day)
             }
 
-            this.focusedDate ??= dayjs().tz(timezone)
+            this.focusedDate ??= dayjs().tz(timezone).toCalendarSystem('hijri')
 
             this.setState(this.focusedDate)
 
@@ -459,25 +462,33 @@ export default function hijriDateTimePickerFormComponent({
         },
 
         setupDaysGrid: function () {
-            this.focusedDate ??= dayjs().tz(timezone)
+            let date = this.focusedDate ?? dayjs().toCalendarSystem('hijri').tz(timezone)
+
+            if(date.$C === 'hijri'){
+                this.focusedDate = date
+            }else{
+                this.focusedDate= dayjs(dayjs.fromCalendarSystem('hijri', date.year(), date.month()+1, date.day())).tz(timezone).toCalendarSystem('hijri')
+            }
+
+            console.log('Setup Days Grid', date.daysInMonth(), this.focusedDate.daysInMonth())
 
             this.emptyDaysInFocusedMonth = Array.from(
                 {
-                    length: this.focusedDate.calendar('hijri').date(8 - firstDayOfWeek).day(),
+                    length: this.focusedDate.date(8 - firstDayOfWeek).day(),
                 },
                 (_, i) => i + 1,
             )
 
             this.daysInFocusedMonth = Array.from(
                 {
-                    length: this.focusedDate.calendar('hijri').daysInMonth(),
+                    length: this.focusedDate.daysInMonth(),
                 },
                 (_, i) => i + 1,
             )
         },
 
         setFocusedDay: function (day) {
-            this.focusedDate = (this.focusedDate ?? dayjs().tz(timezone)).date(
+            this.focusedDate = (this.focusedDate ?? dayjs().tz(timezone).toCalendarSystem('hijri')).date(
                 day,
             )
         },
@@ -498,7 +509,6 @@ export default function hijriDateTimePickerFormComponent({
                 .hour(this.hour ?? 0)
                 .minute(this.minute ?? 0)
                 .second(this.second ?? 0)
-                .calendar('gregory')
                 .format('YYYY-MM-DD HH:mm:ss')
 
             this.setDisplayText()
