@@ -2,6 +2,14 @@
 
 All notable changes to `filament-hijri-picker` will be documented in this file.
 
+## v1.1.0 - 2024-03-12
+
+### What's Changed
+
+* Support Laravel 11.x
+
+**Full Changelog**: https://github.com/mohamedsabil83/filament-hijri-picker/compare/v1.0.0...v1.1.0
+
 ## v1.0.0 - 2024-03-11
 
 ### What's Changed
