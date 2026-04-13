@@ -37,13 +37,12 @@
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
         <div
-            x-ignore
             @if (FilamentView::hasSpaMode())
-                ax-load="visible"
+                x-load="visible"
             @else
-                ax-load
+                x-load
             @endif
-            ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('filament-hijri-picker', 'mohamedsabil83/filament-hijri-picker') }}"
+            x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('filament-hijri-picker', 'mohamedsabil83/filament-hijri-picker') }}"
             x-data="hijriDateTimePickerFormComponent({
                 displayFormat: '{{ convert_date_format($getDisplayFormat())->to('day.js') }}',
                 firstDayOfWeek: {{ $getFirstDayOfWeek() }},
@@ -111,6 +110,7 @@
                     x-model="displayText"
                     @if ($id = $getId()) id="{{ $id }}" @endif
                     @class([
+                        'fi-fo-hijri-date-time-picker-display-text-input',
                         'w-full border-none bg-transparent px-3 py-1.5 text-base text-gray-950 outline-none transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] sm:text-sm sm:leading-6',
                     ])
                 />
