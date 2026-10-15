@@ -36,6 +36,11 @@
         :valid="! $errors->has($statePath)"
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
+        {{--
+            Styling note: Filament 4/5 ship a precompiled stylesheet, so Tailwind utility
+            classes written in package views are never generated. Use Filament's own
+            `fi-fo-date-time-picker-*` component classes instead (they live in Filament's CSS).
+        --}}
         <div
             @if (FilamentView::hasSpaMode())
                 x-load="visible"
@@ -56,7 +61,7 @@
                 $attributes
                     ->merge($getExtraAttributes(), escape: false)
                     ->merge($getExtraAlpineAttributes(), escape: false)
-                    ->class(['filament-hijri-picker'])
+                    ->class(['fi-fo-date-time-picker', 'filament-hijri-picker'])
             }}
         >
             <input
@@ -98,7 +103,7 @@
                 @disabled($isDisabled)
                 {{
                     $getExtraTriggerAttributeBag()->class([
-                        'w-full',
+                        'fi-fo-date-time-picker-trigger',
                     ])
                 }}
             >
@@ -109,10 +114,7 @@
                     wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.display-text"
                     x-model="displayText"
                     @if ($id = $getId()) id="{{ $id }}" @endif
-                    @class([
-                        'fi-fo-hijri-date-time-picker-display-text-input',
-                        'w-full border-none bg-transparent px-3 py-1.5 text-base text-gray-950 outline-none transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] sm:text-sm sm:leading-6',
-                    ])
+                    class="fi-fo-date-time-picker-display-text-input"
                 />
             </button>
 
@@ -122,139 +124,111 @@
                 x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
                 wire:ignore
                 wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.panel"
-                @class([
-                    'filament-hijri-picker-panel absolute z-10 rounded-lg bg-white p-4 shadow-lg ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
-                ])
+                class="fi-fo-date-time-picker-panel filament-hijri-picker-panel"
             >
-                <div class="grid gap-y-3">
-                    @if ($hasDate())
-                        <div class="flex items-center justify-between">
-                            <select
-                                x-model="focusedMonth"
-                                class="grow cursor-pointer border-none bg-transparent p-0 text-sm font-medium text-gray-950 focus:ring-0 dark:bg-gray-900 dark:text-white"
-                            >
-                                <template
-                                    x-for="(month, index) in months"
-                                >
-                                    <option
-                                        x-bind:value="index"
-                                        x-text="month"
-                                    ></option>
-                                </template>
-                            </select>
-
-                            <input
-                                type="number"
-                                inputmode="numeric"
-                                x-model.debounce="focusedYear"
-                                class="w-16 border-none bg-transparent p-0 text-right text-sm text-gray-950 focus:ring-0 dark:text-white"
-                            />
-                        </div>
-
-                        <div class="grid grid-cols-7 gap-1">
-                            <template
-                                x-for="(day, index) in dayLabels"
-                                x-bind:key="index"
-                            >
-                                <div
-                                    x-text="day"
-                                    class="text-center text-xs font-medium text-gray-500 dark:text-gray-400"
-                                ></div>
-                            </template>
-                        </div>
-
-                        <div
-                            role="grid"
-                            class="grid grid-cols-[repeat(7,minmax(theme(spacing.7),1fr))] gap-1"
+                @if ($hasDate())
+                    <div class="fi-fo-date-time-picker-panel-header">
+                        <select
+                            x-model="focusedMonth"
+                            class="fi-fo-date-time-picker-month-select"
                         >
                             <template
-                                x-for="day in emptyDaysInFocusedMonth"
-                                x-bind:key="day"
+                                x-for="(month, index) in months"
                             >
-                                <div></div>
+                                <option
+                                    x-bind:value="index"
+                                    x-text="month"
+                                ></option>
                             </template>
+                        </select>
 
-                            <template
-                                x-for="day in daysInFocusedMonth"
-                                x-bind:key="day"
-                            >
-                                <div
-                                    x-text="day"
-                                    x-on:click="dayIsDisabled(day) || selectDate(day)"
-                                    x-on:mouseenter="setFocusedDay(day)"
-                                    role="option"
-                                    x-bind:aria-selected="focusedDate.date() === day"
-                                    x-bind:class="{
-                                            'text-gray-950 dark:text-white': ! dayIsToday(day) && ! dayIsSelected(day),
-                                            'cursor-pointer': ! dayIsDisabled(day),
-                                            'text-primary-600 dark:text-primary-400':
-                                                dayIsToday(day) &&
-                                                ! dayIsSelected(day) &&
-                                                focusedDate.date() !== day &&
-                                                ! dayIsDisabled(day),
-                                            'bg-gray-50 dark:bg-white/5':
-                                                focusedDate.date() === day && ! dayIsSelected(day),
-                                            'text-primary-600 bg-gray-50 dark:bg-white/5 dark:text-primary-400':
-                                                dayIsSelected(day),
-                                            'pointer-events-none': dayIsDisabled(day),
-                                            'opacity-50': focusedDate.date() !== day && dayIsDisabled(day),
-                                        }"
-                                    class="rounded-full text-center text-sm leading-loose transition duration-75"
-                                ></div>
-                            </template>
-                        </div>
-                    @endif
+                        <input
+                            type="number"
+                            inputmode="numeric"
+                            x-model.debounce="focusedYear"
+                            class="fi-fo-date-time-picker-year-input"
+                        />
+                    </div>
 
-                    @if ($hasTime())
-                        <div
-                            class="flex items-center justify-center rtl:flex-row-reverse"
+                    <div class="fi-fo-date-time-picker-calendar-header">
+                        <template
+                            x-for="(day, index) in dayLabels"
+                            x-bind:key="index"
                         >
-                            <input
-                                max="23"
-                                min="0"
-                                step="{{ $getHoursStep() }}"
-                                type="number"
-                                inputmode="numeric"
-                                x-model.debounce="hour"
-                                class="me-1 w-10 border-none bg-transparent p-0 text-center text-sm text-gray-950 focus:ring-0 dark:text-white"
-                            />
+                            <div
+                                x-text="day"
+                                class="fi-fo-date-time-picker-calendar-header-day"
+                            ></div>
+                        </template>
+                    </div>
 
-                            <span
-                                class="text-sm font-medium text-gray-500 dark:text-gray-400"
-                            >
-                                    :
-                                </span>
+                    <div role="grid" class="fi-fo-date-time-picker-calendar">
+                        <template
+                            x-for="day in emptyDaysInFocusedMonth"
+                            x-bind:key="day"
+                        >
+                            <div></div>
+                        </template>
+
+                        <template
+                            x-for="day in daysInFocusedMonth"
+                            x-bind:key="day"
+                        >
+                            <div
+                                x-text="day"
+                                x-on:click="dayIsDisabled(day) || selectDate(day)"
+                                x-on:mousedown.prevent
+                                x-on:mouseenter="setFocusedDay(day)"
+                                role="option"
+                                x-bind:aria-selected="focusedDate.date() === day"
+                                x-bind:class="{
+                                    'fi-fo-date-time-picker-calendar-day-today': dayIsToday(day),
+                                    'fi-focused': focusedDate.date() === day,
+                                    'fi-selected': dayIsSelected(day),
+                                    'fi-disabled': dayIsDisabled(day),
+                                }"
+                                class="fi-fo-date-time-picker-calendar-day"
+                            ></div>
+                        </template>
+                    </div>
+                @endif
+
+                @if ($hasTime())
+                    <div class="fi-fo-date-time-picker-time-inputs">
+                        <input
+                            max="23"
+                            min="0"
+                            step="{{ $getHoursStep() }}"
+                            type="number"
+                            inputmode="numeric"
+                            x-model.debounce="hour"
+                        />
+
+                        <span class="fi-fo-date-time-picker-time-input-separator">:</span>
+
+                        <input
+                            max="59"
+                            min="0"
+                            step="{{ $getMinutesStep() }}"
+                            type="number"
+                            inputmode="numeric"
+                            x-model.debounce="minute"
+                        />
+
+                        @if ($hasSeconds())
+                            <span class="fi-fo-date-time-picker-time-input-separator">:</span>
 
                             <input
                                 max="59"
                                 min="0"
-                                step="{{ $getMinutesStep() }}"
+                                step="{{ $getSecondsStep() }}"
                                 type="number"
                                 inputmode="numeric"
-                                x-model.debounce="minute"
-                                class="me-1 w-10 border-none bg-transparent p-0 text-center text-sm text-gray-950 focus:ring-0 dark:text-white"
+                                x-model.debounce="second"
                             />
-
-                            @if ($hasSeconds())
-                                <span
-                                    class="text-sm font-medium text-gray-500 dark:text-gray-400"
-                                >
-                                        :
-                                    </span>
-
-                                <input
-                                    max="59"
-                                    min="0"
-                                    step="{{ $getSecondsStep() }}"
-                                    type="number"
-                                    inputmode="numeric"
-                                    x-model.debounce="second"
-                                    class="me-1 w-10 border-none bg-transparent p-0 text-center text-sm text-gray-950 focus:ring-0 dark:text-white"
-                                />
-                            @endif
-                        </div>
-                    @endif
-                </div>
+                        @endif
+                    </div>
+                @endif
             </div>
         </div>
     </x-filament::input.wrapper>

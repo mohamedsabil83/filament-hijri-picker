@@ -381,13 +381,15 @@ export default function hijriDateTimePickerFormComponent({
                 return null
             }
 
+            // The state is always a Gregorian date string (what Filament/Carbon
+            // expect); the picker only *displays* and navigates in the Hijri calendar.
             let date = dayjs(this.state)
 
             if (!date.isValid()) {
                 return null
             }
 
-            return date
+            return date.toCalendarSystem('hijri')
         },
 
         togglePanelVisibility: function () {
@@ -462,15 +464,13 @@ export default function hijriDateTimePickerFormComponent({
         },
 
         setupDaysGrid: function () {
-            let date = this.focusedDate ?? dayjs().toCalendarSystem('hijri').tz(timezone)
+            const date = this.focusedDate ?? dayjs().tz(timezone)
 
-            if(date.$C === 'hijri'){
-                this.focusedDate = date
-            }else{
-                this.focusedDate= dayjs(dayjs.fromCalendarSystem('hijri', date.year(), date.month()+1, date.day())).tz(timezone).toCalendarSystem('hijri')
+            // Only reassign when needed: assigning focusedDate re-triggers its
+            // watcher, which calls this method again.
+            if (date.$C !== 'hijri' || this.focusedDate === null) {
+                this.focusedDate = date.toCalendarSystem('hijri')
             }
-
-            console.log('Setup Days Grid', date.daysInMonth(), this.focusedDate.daysInMonth())
 
             this.emptyDaysInFocusedMonth = Array.from(
                 {
@@ -505,7 +505,9 @@ export default function hijriDateTimePickerFormComponent({
                 return
             }
 
+            // Always persist the Gregorian equivalent, never the Hijri representation.
             this.state = date
+                .toCalendarSystem('gregory')
                 .hour(this.hour ?? 0)
                 .minute(this.minute ?? 0)
                 .second(this.second ?? 0)
